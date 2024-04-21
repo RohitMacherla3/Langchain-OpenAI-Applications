@@ -1,14 +1,20 @@
 from langchain_openai import OpenAI
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import streamlit as st
-import os
+# import os
 
 #load OPEN AI KEY from .env
-load_dotenv()
+# load_dotenv()
+
+#load OPEN AI KEY from headers using secrtes
+headers = {
+    'authorization': st.secrets['auth_token'],
+    'content_type': 'application/json'
+}
 
 # function to load llm  and get output response
 def get_response(input):
-    llm = OpenAI(openai_api_key=os.getenv('OPENAI_API_KEY'), temperature=0.2)
+    llm = OpenAI(openai_api_key=headers['authorization'], temperature=0.2)
     response = llm.invoke(input)
     return response
 
