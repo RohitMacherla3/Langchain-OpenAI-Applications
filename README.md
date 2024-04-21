@@ -1,5 +1,5 @@
 # langchain-apps-OpenAI
-This repository contains multiple ongoing projects using LangChain and OpenAI chat model.
+This repository contains multiple projects using LangChain and OpenAI chat model like Q&A bots, chatbots, MCQ generators, text summarizers
 
 # Deployment
 
