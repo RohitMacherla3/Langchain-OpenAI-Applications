@@ -1,5 +1,10 @@
+streamlit
 langchain
 langchain-openai
 openai
-streamlit
 python-dotenv
+tiktoken
+PyPDF2
+InstructorEmbedding
+faiss-cpu
+langchain-astradb
