@@ -149,7 +149,7 @@ def main():
         default_quesition_1 = col3.button('What is Attention?')
         default_quesition_2 = col4.button('What is Self-Attention?')
         default_quesition_3 = col5.button('What is the difference between them?')
-        default_quesition_4 = col6.button('Explain Transformers?')
+        default_quesition_4 = col6.button('Explain Transformers.')
         
         if default_quesition_1 or default_quesition_2 or default_quesition_3 or default_quesition_4:
             if st.session_state.conversation is None:
