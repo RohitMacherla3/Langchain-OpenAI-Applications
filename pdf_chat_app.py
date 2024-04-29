@@ -186,14 +186,14 @@ def main():
 
 if __name__ == "__main__":
     
-    #initializing all secret keys (local app)
-    load_dotenv()
-    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
+    ##initializing all secret keys (local app)
+    # load_dotenv()
+    # OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
     
-    # initializing all secret keys (streamlit deployment)
-    # headers = {
-    # 'authorization': st.secrets['OPENAI_API_KEY'],
-    # 'content_type': 'application/json'
-    # }
-    # OPENAI_API_KEY = headers['authorization']
+    #initializing all secret keys (streamlit deployment)
+    headers = {
+    'authorization': st.secrets['OPENAI_API_KEY'],
+    'content_type': 'application/json'
+    }
+    OPENAI_API_KEY = headers['authorization']
     main()
