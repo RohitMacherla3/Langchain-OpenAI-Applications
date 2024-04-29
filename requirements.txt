@@ -7,3 +7,4 @@ cassio
 tiktoken
 PyPDF2
 InstructorEmbedding
+FAISS
