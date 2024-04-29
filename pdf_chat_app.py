@@ -1,6 +1,6 @@
-import os
+# import os
 import streamlit as st
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # load data
 from PyPDF2 import PdfReader
@@ -150,10 +150,11 @@ def main():
 if __name__ == "__main__":
     
     #initializing all secret keys
-    load_dotenv()
+    # load_dotenv()
+    # OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
     
     headers = {
     'authorization': st.secrets['OPENAI_API_KEY'],
     'content_type': 'application/json'
-    } 
+    }
     main()
