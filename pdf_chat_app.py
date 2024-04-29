@@ -1,6 +1,7 @@
-# import os
+import os
+from dotenv import load_dotenv
 import streamlit as st
-# from dotenv import load_dotenv
+
 
 # load data
 from PyPDF2 import PdfReader
@@ -42,7 +43,7 @@ def get_text_chunks(pdfs):
     return chunks
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI(api_key=headers['authorization'], model_name='gpt-3.5-turbo', temperature=0.1)
+    llm = ChatOpenAI(api_key=OPENAI_API_KEY, model_name='gpt-3.5-turbo', temperature=0.1)
     retriever = vectorstore.as_retriever()
     
     contextualize_q_system_prompt = (
@@ -85,19 +86,22 @@ def get_conversation_chain(vectorstore):
 
 def get_output_response(question):
     response = st.session_state.conversation.invoke({"input": question, "chat_history": st.session_state.chat_history})
-    st.session_state.chat_history.extend([HumanMessage(content=question), response["answer"]])
+    st.session_state.chat_history.extend([response["answer"], HumanMessage(content=question)])
         
-    for i, message in enumerate(st.session_state.chat_history):
+    for i, message in enumerate(reversed(st.session_state.chat_history)):
         if i %2 == 0:
             st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
         else:
             st.write(bot_template.replace(
-                "{{MSG}}", str(message)), unsafe_allow_html=True)
+                "{{MSG}}", message), unsafe_allow_html=True)
     
 def main():
     
-    st.set_page_config(page_title = "Chat with PDFs")
-    st.header('Chat with PDFs')
+    st.set_page_config(page_title = "Chat with PDFs", page_icon = ":books:")
+    st.header('Chat with PDFs :')
+    st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #2b313e; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
+                unsafe_allow_html=True
+                )
     st.write(css, unsafe_allow_html=True)
     
     if 'conversation' not in st.session_state:
@@ -114,6 +118,7 @@ def main():
         elif model_type == 'Upload pdf':
             input_pdfs = st.file_uploader('Upload your PDFs here and click Process', type='pdf', accept_multiple_files=True)
         
+        st.write('Click the Process button to process the document(s)')
         if st.button('Process'):
             if len(input_pdfs) > 0:
             
@@ -123,43 +128,72 @@ def main():
                     text_chunks = get_text_chunks(input_pdfs)
                     
                     # convert text to embeddings
-                    embeds = OpenAIEmbeddings(model='text-embedding-3-small')
+                    embeds = OpenAIEmbeddings(api_key=OPENAI_API_KEY, model='text-embedding-3-small')
                     
                     # store the embeddings into a vectore store
                     vectorstore = FAISS.from_texts(text_chunks, embedding=embeds)
                     
                     st.write("Files Processed!")
                     
-                    
                     st.session_state.conversation = get_conversation_chain(vectorstore)
                     
             else:
                 st.write("Please upload a file to process")
     
+    if model_type != 'Upload pdf':
+        
+        st.write('<div style="text-align:center; margin-right:200px;">How can I help you today?</div>', unsafe_allow_html=True)
+        st.write('\n')
+        col3, col4 = st.columns(2)
+        col5, col6 = st.columns(2)
+        default_quesition_1 = col3.button('What is Attention?')
+        default_quesition_2 = col4.button('What is Self-Attention?')
+        default_quesition_3 = col5.button('What is the difference between them?')
+        default_quesition_4 = col6.button('Explain Transformers?')
+        
+        if default_quesition_1 or default_quesition_2 or default_quesition_3 or default_quesition_4:
+            if st.session_state.conversation is None:
+                st.write('Click the process button on the side menu to process the file')
+            else:
+                with st.spinner('Generating...'):
+                    if default_quesition_1:
+                        get_output_response('What is Attention?')
+                    elif default_quesition_2:
+                        get_output_response('What is Self-Attention?')
+                    elif default_quesition_3:
+                        get_output_response('What is the difference between them?')
+                    elif default_quesition_4:
+                        get_output_response('Explain Transformers?')
+            
+    st.write('\n')
+    st.write('\n')
     question = st.text_input('Ask questions about your document(s): ')
-    col1, col2 = st.columns(2)
-    click = col1.button('Generate')
-    clear_chat = col2.button('Clear Chat')
     
-    if question and click:
+    col1, col2 = st.columns(2)
+    st.session_state.click = col1.button('Generate')
+    st.session_state.clear_chat = col2.button('Clear Chat')
+    
+    if question and st.session_state.click:
         if st.session_state.conversation is not None:
             with st.spinner('Generating...'):
                 get_output_response(question)
         else:
-            st.write('Please upload a file to process')
+            st.write('Please upload a file or use the deafult file and click process on the side menu')
     
-    if clear_chat:
+    if st.session_state.clear_chat:
         st.session_state.chat_history = []
 
 
 if __name__ == "__main__":
     
-    #initializing all secret keys
-    # load_dotenv()
-    # OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
+    #initializing all secret keys (local app)
+    load_dotenv()
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
     
-    headers = {
-    'authorization': st.secrets['OPENAI_API_KEY'],
-    'content_type': 'application/json'
-    }
+    # initializing all secret keys (streamlit deployment)
+    # headers = {
+    # 'authorization': st.secrets['OPENAI_API_KEY'],
+    # 'content_type': 'application/json'
+    # }
+    # OPENAI_API_KEY = headers['authorization']
     main()

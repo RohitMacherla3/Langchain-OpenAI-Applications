@@ -3,8 +3,6 @@ langchain
 langchain-openai
 openai
 python-dotenv
-cassio
 tiktoken
 PyPDF2
-InstructorEmbedding
 faiss-cpu
