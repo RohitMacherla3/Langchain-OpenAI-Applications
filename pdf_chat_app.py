@@ -137,7 +137,7 @@ def main():
                 st.write("Please upload a file to process")
     
     question = st.text_input('Ask questions about your document(s): ')
-    col1, col2 = st.columns(3)
+    col1, col2 = st.columns(2)
     click = col1.button('Generate')
     clear_chat = col2.button('Clear Chat')
     
