@@ -42,7 +42,7 @@ def get_text_chunks(pdfs):
     return chunks
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI(api_key=OPENAI_API_KEY, model_name='gpt-3.5-turbo', temperature=0.1)
+    llm = ChatOpenAI(api_key=headers['authorization'], model_name='gpt-3.5-turbo', temperature=0.1)
     retriever = vectorstore.as_retriever()
     
     contextualize_q_system_prompt = (
@@ -151,5 +151,9 @@ if __name__ == "__main__":
     
     #initializing all secret keys
     load_dotenv()
-    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')    
+    
+    headers = {
+    'authorization': st.secrets['OPENAI_API_KEY'],
+    'content_type': 'application/json'
+    } 
     main()
