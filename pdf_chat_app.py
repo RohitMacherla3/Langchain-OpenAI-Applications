@@ -137,7 +137,9 @@ def main():
                 st.write("Please upload a file to process")
     
     question = st.text_input('Ask questions about your document(s): ')
-    click = st.button('Generate')
+    col1, col2 = st.columns(3)
+    click = col1.button('Generate')
+    clear_chat = col2.button('Clear Chat')
     
     if question and click:
         if st.session_state.conversation is not None:
@@ -145,6 +147,9 @@ def main():
                 get_output_response(question)
         else:
             st.write('Please upload a file to process')
+    
+    if clear_chat:
+        st.session_state.chat_history = []
 
 
 if __name__ == "__main__":
