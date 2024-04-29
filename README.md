@@ -1,8 +1,6 @@
 # langchain-apps-OpenAI
 This repository contains multiple projects using LangChain and OpenAI chat model like Q&A bots, chatbots, MCQ generators, text summarizers
 
-# Deployments
-
 # PDF Chat Application:
 - A chat application where you can upload your pdf(s) and chat with them. Provides a quick way to get understand the pdf(s).
 
