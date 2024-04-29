@@ -6,7 +6,8 @@ This repository contains multiple projects using LangChain and OpenAI chat model
 
 Deployed as a Streamlit app - https://pdf-chat-application.streamlit.app/
 
-<img width="1385" alt="image" src="https://github.com/RohitMacherla3/langchain-apps-OpenAI/assets/89356811/7b2555bc-90b5-47f5-a55b-ab4ac9739fa3">
+<img width="1385" alt="image" src="https://github.com/RohitMacherla3/langchain-apps-OpenAI/assets/89356811/bf45d087-3488-41cd-86c0-1efb9a61f760">
+
 
 
 # Q&A Bot:
