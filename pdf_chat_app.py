@@ -98,7 +98,7 @@ def get_output_response(question):
 def main():
     
     st.set_page_config(page_title = "Chat with PDFs", page_icon = ":books:")
-    st.header('Chat with PDFs :')
+    st.header('Chat with PDFs :books:')
     st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #2b313e; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
                 unsafe_allow_html=True
                 )
