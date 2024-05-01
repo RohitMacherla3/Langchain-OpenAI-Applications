@@ -26,11 +26,22 @@ def get_text_chunks(pdfs):
         pdf_reader = PdfReader(pdfs)
         for page in pdf_reader.pages:
             text +=page.extract_text()
+        st.write(f"Processed attention.pdf")
     else:
+        file_size = 0 # to check the file size constraint of <10MB
+        file_names = [] # to only process unique files
         for pdf in pdfs:
-            pdf_reader = PdfReader(pdf)
-            for page in pdf_reader.pages:
-                text +=page.extract_text()
+            if pdf.name not in file_names:
+                file_size += pdf.size
+                if file_size <= 10 * 1024 * 1024:
+                    file_names.append(pdf.name)
+                    pdf_reader = PdfReader(pdf)
+                    for page in pdf_reader.pages:
+                        text +=page.extract_text()
+                    st.write(f"Processed {pdf.name}")
+                else:
+                    st.error("Overall size of the files exceeds the limit of 10 MB. Re-upload the files.")
+                    return None
     
     text_splitter = CharacterTextSplitter(
         separator = "\n",
@@ -99,7 +110,7 @@ def main():
     
     st.set_page_config(page_title = "Chat with PDFs", page_icon = ":books:")
     st.header('Chat with PDFs :books:')
-    st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #2b313e; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
+    st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
                 unsafe_allow_html=True
                 )
     st.write(css, unsafe_allow_html=True)
@@ -109,14 +120,14 @@ def main():
         
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
-    
     with st.sidebar:
         st.subheader('Your documents')
         model_type = st.sidebar.radio("Select File", ['Use pdf of Attention is all you need paper', 'Upload pdf'])
         if model_type == 'Use pdf of Attention is all you need paper':
             input_pdfs = 'docs/attention.pdf'
         elif model_type == 'Upload pdf':
-            input_pdfs = st.file_uploader('Upload your PDFs here and click Process', type='pdf', accept_multiple_files=True)
+            input_pdfs = st.file_uploader('Upload your PDFs (upto overall size of 10MB)', type='pdf', 
+                                          accept_multiple_files=True)
         
         st.write('Click the Process button to process the document(s)')
         if st.button('Process'):
@@ -131,11 +142,9 @@ def main():
                     embeds = OpenAIEmbeddings(api_key=OPENAI_API_KEY, model='text-embedding-3-small')
                     
                     # store the embeddings into a vectore store
-                    vectorstore = FAISS.from_texts(text_chunks, embedding=embeds)
-                    
-                    st.write("Files Processed!")
-                    
-                    st.session_state.conversation = get_conversation_chain(vectorstore)
+                    if text_chunks is not None:
+                        vectorstore = FAISS.from_texts(text_chunks, embedding=embeds)
+                        st.session_state.conversation = get_conversation_chain(vectorstore)
                     
             else:
                 st.write("Please upload a file to process")
@@ -167,7 +176,7 @@ def main():
             
     st.write('\n')
     st.write('\n')
-    question = st.text_input('Ask questions about your document(s): ')
+    question = st.text_input('Enter questions about your document(s) and click Generate: ')
     
     col1, col2 = st.columns(2)
     st.session_state.click = col1.button('Generate')
@@ -186,7 +195,7 @@ def main():
 
 if __name__ == "__main__":
     
-    ##initializing all secret keys (local app)
+    # #initializing all secret keys (local app)
     # load_dotenv()
     # OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
     
