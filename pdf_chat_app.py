@@ -122,10 +122,12 @@ def main():
         st.subheader('Your documents')
         model_type = st.sidebar.radio("Select File", ['Use pdf of Attention is all you need paper', 'Upload pdf'])
         if model_type == 'Use pdf of Attention is all you need paper':
-            st.session_state.chat_history = [] # resetting chat history when source is changed
+            st.session_state.chat_history = [] #resetting chat history when source is changed
+            st.session_state.conversation = None
             input_pdfs = 'docs/attention.pdf'
         elif model_type == 'Upload pdf':
-            st.session_state.chat_history = [] # resetting chat history when source is changed
+            st.session_state.chat_history = [] #resetting chat history when source is changed
+            st.session_state.conversation = None
             input_pdfs = st.file_uploader('Upload your PDFs (upto overall size of 10MB)', type='pdf', 
                                           accept_multiple_files=True)
         
