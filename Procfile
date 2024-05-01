@@ -1,1 +1,1 @@
-web: streamlit run pdf_chat_app.py --server.maxUploadSize 5
+web: streamlit run pdf_chat_app.py --server.maxUploadSize 50
