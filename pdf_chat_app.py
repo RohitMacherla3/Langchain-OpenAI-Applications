@@ -72,6 +72,7 @@ def get_conversation_chain(vectorstore):
             ("human", "{input}"),
         ]
     )
+    
     history_aware_retriever = create_history_aware_retriever(
         llm, retriever, contextualize_q_prompt
     )
@@ -116,23 +117,33 @@ def main():
     st.write(css, unsafe_allow_html=True)
     
     if 'conversation' not in st.session_state:
-        st.session_state.conversation = None
+        st.session_state.conversation = None 
+    
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = []
+    
+    if 'selected_model_type' not in st.session_state:
+        st.session_state.selected_model_type = None
         
     with st.sidebar:
         st.subheader('Your documents')
         model_type = st.sidebar.radio("Select File", ['Use pdf of Attention is all you need paper', 'Upload pdf'])
+        
         if model_type == 'Use pdf of Attention is all you need paper':
-            st.session_state.chat_history = [] #resetting chat history when source is changed
             input_pdfs = 'docs/attention.pdf'
         elif model_type == 'Upload pdf':
-            st.session_state.chat_history = [] #resetting chat history when source is changed
-            input_pdfs = st.file_uploader('Upload your PDFs (upto overall size of 10MB)', type='pdf', 
+            input_pdfs = st.file_uploader('Upload your PDFs (upto overall size of 10MB)', type='pdf',
                                           accept_multiple_files=True)
+        
+        # Reset session state when model type changes
+        if model_type != st.session_state.selected_model_type:
+            st.session_state.conversation = None
+            st.session_state.chat_history = []
+            st.session_state.selected_model_type = model_type
         
         st.write('Click the Process button to process the document(s)')
         if st.button('Process'):
-            if len(input_pdfs) > 0:
-            
+            if model_type and input_pdfs:
                 with st.spinner('Processing...'):
                     
                     # get text chunks from pdfs
@@ -195,7 +206,7 @@ def main():
 
 if __name__ == "__main__":
     
-    ##initializing all secret keys (local app)
+    # #initializing all secret keys (local app)
     # load_dotenv()
     # OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
     
