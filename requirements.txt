@@ -6,3 +6,4 @@ python-dotenv
 tiktoken
 PyPDF2
 faiss-cpu
+langchain-community
