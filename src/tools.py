@@ -1,11 +1,32 @@
 from langchain_community.tools import WikipediaQueryRun
 from langchain_community.utilities import WikipediaAPIWrapper
-from langchain.agents import tool
+from langchain.agents import tool, load_tools
 from pydantic import BaseModel, Field
 import requests, datetime
 
+# load keys from local
+# import os
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+# OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+# SERPER_API_KEY = os.environ.get('SERPER_API_KEY')
+# TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
+
+
+#load keys from headers using secrtes
+headers = {
+    'authorization': st.secrets['auth_token'],
+    'content_type': 'application/json'
+}
+
+OPENAI_API_KEY = headers['authorization']['OPENAI_API_KEY']
+SERPER_API_KEY = headers['authorization']['SERPER_API_KEY']
+TAVILY_API_KEY = headers['authorization']['TAVILY_API_KEY']
+
 # Wikipedia tool
-api_wrapper = WikipediaAPIWrapper(top_k_results=3, doc_content_chars_max=200)
+api_wrapper = WikipediaAPIWrapper(top_k_results=3, doc_content_chars_max=1000)
 wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
 
 # Weather tool
@@ -41,3 +62,14 @@ def get_temperature(latitude, longitude) -> dict:
     current_temperature = temperature_list[closest_time_index]
     
     return f'The current temperature is {current_temperature}°C'
+
+# google search tool
+google_tool = load_tools(["serpapi"])[0]
+google_tool
+
+# tavily search
+from langchain_community.tools.tavily_search import TavilySearchResults
+
+tavily_tool = TavilySearchResults()
+
+

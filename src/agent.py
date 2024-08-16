@@ -1,8 +1,23 @@
-import os
-from dotenv import load_dotenv
-import streamlit as st
-from tools import get_temperature, wiki_tool
+# import os
+# from dotenv import load_dotenv
+# load_dotenv()
 
+# OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+# SERPER_API_KEY = os.environ.get('SERPER_API_KEY')
+# TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
+
+#load OPEN AI KEY from headers using secrtes
+headers = {
+    'authorization': st.secrets['auth_token'],
+    'content_type': 'application/json'
+}
+
+OPENAI_API_KEY = headers['authorization']['OPENAI_API_KEY']
+SERPER_API_KEY = headers['authorization']['SERPER_API_KEY']
+TAVILY_API_KEY = headers['authorization']['TAVILY_API_KEY']
+
+import streamlit as st
+from tools import get_temperature, wiki_tool, google_tool, tavily_tool
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
@@ -17,7 +32,7 @@ from langchain.agents import AgentExecutor
 
 
 st.set_page_config(page_title = "Conversational Agent")
-st.header('Conversational Agent')
+st.header('Conversational OpenAI Agent')
 
 def agent():
     model = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
@@ -28,10 +43,8 @@ def agent():
         ("user", "{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad")
     ])
-    
-    st.write(prompt)
 
-    tools = [get_temperature, wiki_tool]
+    tools = [get_temperature, wiki_tool, google_tool, tavily_tool]
     functions = [convert_to_openai_function(i)for i in  tools]
 
     agent_model = model.bind(functions = functions)
@@ -44,7 +57,7 @@ def agent():
 
     st.session_state.memory = ConversationBufferMemory(return_messages=True,memory_key="chat_history")
 
-    st.session_state.agent_executor = AgentExecutor(agent=st.session_state.agent_chain, tools=tools, verbose=True, memory=st.session_state.memory)
+    st.session_state.agent_executor = AgentExecutor(agent=st.session_state.agent_chain, tools=tools, verbose=False, memory=st.session_state.memory)
     
     return st.session_state.agent_executor
 
