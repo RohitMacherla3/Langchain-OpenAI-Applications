@@ -15,7 +15,7 @@ from langchain.chains import create_history_aware_retriever, create_retrieval_ch
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage
-from utils.htmlTemplates import css, bot_template, user_template 
+from htmlTemplates import css, bot_template, user_template 
 
 # read pdf into a single text and splict into chunks
 def get_text_chunks(pdfs):
