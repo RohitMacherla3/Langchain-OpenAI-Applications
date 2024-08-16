@@ -10,7 +10,9 @@
 
 import streamlit as st
 headers = {
-    'authorization': st.secrets['auth_token'],
+    'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
+    'SERPER_API_KEY': st.secrets['SERPER_API_KEY'],
+    'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
     'content_type': 'application/json'
 }
 
