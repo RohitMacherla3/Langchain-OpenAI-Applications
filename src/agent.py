@@ -7,6 +7,8 @@
 # TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
 
 #load OPEN AI KEY from headers using secrtes
+
+import streamlit as st
 headers = {
     'authorization': st.secrets['auth_token'],
     'content_type': 'application/json'
@@ -16,7 +18,6 @@ OPENAI_API_KEY = headers['authorization']['OPENAI_API_KEY']
 SERPER_API_KEY = headers['authorization']['SERPER_API_KEY']
 TAVILY_API_KEY = headers['authorization']['TAVILY_API_KEY']
 
-import streamlit as st
 from tools import get_temperature, wiki_tool, google_tool, tavily_tool
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
