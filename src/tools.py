@@ -15,15 +15,17 @@ import requests, datetime
 # TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
 
 
-#load keys from headers using secrtes
+import streamlit as st
 headers = {
-    'authorization': st.secrets['auth_token'],
+    'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
+    'SERPER_API_KEY': st.secrets['SERPER_API_KEY'],
+    'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
     'content_type': 'application/json'
 }
 
-OPENAI_API_KEY = headers['authorization']['OPENAI_API_KEY']
-SERPER_API_KEY = headers['authorization']['SERPER_API_KEY']
-TAVILY_API_KEY = headers['authorization']['TAVILY_API_KEY']
+OPENAI_API_KEY = headers['OPENAI_API_KEY']
+SERPER_API_KEY = headers['SERPER_API_KEY']
+TAVILY_API_KEY = headers['TAVILY_API_KEY']
 
 # Wikipedia tool
 api_wrapper = WikipediaAPIWrapper(top_k_results=3, doc_content_chars_max=1000)

@@ -16,9 +16,9 @@ headers = {
     'content_type': 'application/json'
 }
 
-OPENAI_API_KEY = headers['authorization']['OPENAI_API_KEY']
-SERPER_API_KEY = headers['authorization']['SERPER_API_KEY']
-TAVILY_API_KEY = headers['authorization']['TAVILY_API_KEY']
+OPENAI_API_KEY = headers['OPENAI_API_KEY']
+SERPER_API_KEY = headers['SERPER_API_KEY']
+TAVILY_API_KEY = headers['TAVILY_API_KEY']
 
 from tools import get_temperature, wiki_tool, google_tool, tavily_tool
 from langchain_openai import ChatOpenAI
