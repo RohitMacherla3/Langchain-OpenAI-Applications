@@ -1,24 +1,24 @@
-# import os
-# from dotenv import load_dotenv
-# load_dotenv()
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-# OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-# SERPER_API_KEY = os.environ.get('SERPER_API_KEY')
-# TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+SERPAPI_API_KEY = os.environ.get('SERPAPI_API_KEY')
+TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
 
 #load OPEN AI KEY from headers using secrtes
 
 import streamlit as st
-headers = {
-    'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
-    'SERPER_API_KEY': st.secrets['SERPER_API_KEY'],
-    'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
-    'content_type': 'application/json'
-}
+# headers = {
+#     'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
+#     'SERPAPI_API_KEY': st.secrets['SERPAPI_API_KEY'],
+#     'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
+#     'content_type': 'application/json'
+# }
 
-OPENAI_API_KEY = headers['OPENAI_API_KEY']
-SERPER_API_KEY = headers['SERPER_API_KEY']
-TAVILY_API_KEY = headers['TAVILY_API_KEY']
+# OPENAI_API_KEY = headers['OPENAI_API_KEY']
+# SERPAPI_API_KEY = headers['SERPAPI_API_KEY']
+# TAVILY_API_KEY = headers['TAVILY_API_KEY']
 
 from tools import get_temperature, wiki_tool, google_tool, tavily_tool
 from langchain_openai import ChatOpenAI
