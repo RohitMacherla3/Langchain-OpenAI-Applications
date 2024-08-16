@@ -20,7 +20,7 @@ import streamlit as st
 # SERPAPI_API_KEY = headers['SERPAPI_API_KEY']
 # TAVILY_API_KEY = headers['TAVILY_API_KEY']
 
-from tools import get_temperature, wiki_tool, google_tool, tavily_tool
+from tools import get_temperature, wiki_tool, tavily_tool
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
@@ -47,7 +47,7 @@ def agent():
         MessagesPlaceholder(variable_name="agent_scratchpad")
     ])
 
-    tools = [get_temperature, wiki_tool, google_tool, tavily_tool]
+    tools = [get_temperature, wiki_tool, tavily_tool]
     functions = [convert_to_openai_function(i)for i in  tools]
 
     agent_model = model.bind(functions = functions)

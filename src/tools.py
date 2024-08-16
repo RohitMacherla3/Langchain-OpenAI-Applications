@@ -65,10 +65,6 @@ def get_temperature(latitude, longitude) -> dict:
     
     return f'The current temperature is {current_temperature}°C'
 
-# google search tool
-google_tool = load_tools(["serpapi"])[0]
-google_tool
-
 # tavily search
 from langchain_community.tools.tavily_search import TavilySearchResults
 
