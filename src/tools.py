@@ -1,6 +1,6 @@
 from langchain_community.tools import WikipediaQueryRun
 from langchain_community.utilities import WikipediaAPIWrapper
-from langchain.agents import tool, load_tools
+from langchain.agents import tool
 from pydantic import BaseModel, Field
 import requests, datetime
 
