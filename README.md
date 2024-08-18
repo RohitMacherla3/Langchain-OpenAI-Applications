@@ -18,8 +18,9 @@ Deployed as a Streamlit Application - https://generative-ai-applications-suite.s
 
 
 # 3. Q&A Chat Bot:
-- Provides answers to questions using the gpt-3.5-turbo model. (not a conversational application)
+- Provides answers to questions using the GPT-3.5-turbo model. (not a conversational application)
 
-<img width="1377" alt="image" src="https://github.com/user-attachments/assets/e03aa85f-007f-49d9-8c00-5969cc574584">
+<img width="1402" alt="image" src="https://github.com/user-attachments/assets/a25a9e52-812b-4966-a4b5-e6da4b9b1dd5">
+
 
 
