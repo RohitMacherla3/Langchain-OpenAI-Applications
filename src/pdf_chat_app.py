@@ -150,7 +150,6 @@ def pdf_main():
             # Reset session state when model type changes
             if model_type != st.session_state.selected_model_type:
                 st.session_state.conversation = None
-                st.session_state.chat_history = []
                 st.session_state.selected_model_type = model_type
             
             st.write('Click the Process button to process the document(s)')
