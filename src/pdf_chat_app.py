@@ -16,20 +16,20 @@ def pdf_main():
     from langchain_core.messages import HumanMessage, AIMessage
     from htmlTemplates import css, bot_template, user_template 
 
-    #initializing all secret keys (local app)
-    import os
-    from dotenv import load_dotenv
-    load_dotenv()
-    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
+    # #initializing all secret keys (local app)
+    # import os
+    # from dotenv import load_dotenv
+    # load_dotenv()
+    # OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
         
-    # #initializing all secret keys (streamlit deployment)
-    # headers = {
-    #     'authorization': st.secrets['OPENAI_API_KEY'],
-    #     'content_type': 'application/json'
-    #     }
-    # OPENAI_API_KEY = headers['authorization']
+    #initializing all secret keys (streamlit deployment)
+    headers = {
+        'authorization': st.secrets['OPENAI_API_KEY'],
+        'content_type': 'application/json'
+        }
+    OPENAI_API_KEY = headers['authorization']
 
-    # read pdf into a single text and splict into chunks
+    #read pdf into a single text and splict into chunks
     def get_text_chunks(pdfs):
         
         text = ""

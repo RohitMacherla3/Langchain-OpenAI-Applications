@@ -4,28 +4,28 @@ from langchain.agents import tool
 from pydantic import BaseModel, Field
 import requests, datetime
 
-# load keys from local
-import os
-from dotenv import load_dotenv
+# # load keys from local
+# import os
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-SERPAPI_API_KEY = os.environ.get('SERPAPI_API_KEY')
-TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
+# OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+# SERPAPI_API_KEY = os.environ.get('SERPAPI_API_KEY')
+# TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
 
 
 import streamlit as st
-# headers = {
-#     'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
-#     'SERPAPI_API_KEY': st.secrets['SERPAPI_API_KEY'],
-#     'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
-#     'content_type': 'application/json'
-# }
+headers = {
+    'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
+    'SERPAPI_API_KEY': st.secrets['SERPAPI_API_KEY'],
+    'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
+    'content_type': 'application/json'
+}
 
-# OPENAI_API_KEY = headers['OPENAI_API_KEY']
-# SERPAPI_API_KEY = headers['SERPAPI_API_KEY']
-# TAVILY_API_KEY = headers['TAVILY_API_KEY']
+OPENAI_API_KEY = headers['OPENAI_API_KEY']
+SERPAPI_API_KEY = headers['SERPAPI_API_KEY']
+TAVILY_API_KEY = headers['TAVILY_API_KEY']
 
 # Wikipedia tool
 api_wrapper = WikipediaAPIWrapper(top_k_results=3, doc_content_chars_max=1000)
