@@ -13,7 +13,8 @@ Deployed as a Streamlit Application - https://generative-ai-applications-suite.s
 # 2. Conversational Agent
 - A conversation agent that can decide which functionality to use such as direct answer generation using ChatGPT or doing a web search etc.
 
-<img width="1349" alt="image" src="https://github.com/user-attachments/assets/bcbcd91d-ce77-4630-a8d1-07b22197121b">
+<img width="1402" alt="image" src="https://github.com/user-attachments/assets/ee16c955-19e1-4c97-b264-9e9624653316">
+
 
 
 # 3. Q&A Chat Bot:
