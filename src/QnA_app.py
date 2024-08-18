@@ -1,33 +1,44 @@
-from langchain_openai import OpenAI
-# from dotenv import load_dotenv
-import streamlit as st
-# import os
+def q_and_a_main():
+    from langchain_openai import ChatOpenAI
+    import streamlit as st
 
-#load OPEN AI KEY from .env
-# load_dotenv()
+    #initializing all secret keys (local app)
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY') 
+    
+    # #initializing all secret keys (streamlit deployment)
+    # headers = {
+    #     'authorization': st.secrets['OPENAI_API_KEY'],
+    #     'content_type': 'application/json'
+    #     }
+    # OPENAI_API_KEY = headers['authorization']
 
-#load OPEN AI KEY from headers using secrtes
-headers = {
-    'authorization': st.secrets['auth_token'],
-    'content_type': 'application/json'
-}
+    # function to load llm  and get output response
+    def q_and_a_chatbot(input):
+        llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, temperature=0, model='gpt-3.5-turbo')
+        response = llm.invoke(input)
+        return response.content
+    
 
-# function to load llm  and get output response
-def get_response(input):
-    llm = OpenAI(openai_api_key=headers['authorization'], temperature=0.2)
-    response = llm.invoke(input)
-    return response
+    # streamlit application
 
-# streamlit application
+    # st.set_page_config(page_title = "Q&A Bot")
+    st.header('Q&A Bot Powered by OpenAI and LangChain')
+    st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
+                    unsafe_allow_html=True
+                    )
+    st.write("Capabilities: Uses ChatGPT-3.5 to generate answers. It has no memory and each question is handled individually")
+    input = st.text_input('Ask a question: ', key ='input')
 
-st.set_page_config(page_title = "Q&A Bot")
-st.header('Q&A Bot Powered by OpenAI and LangChain')
-input = st.text_input('Input: ', key ='input')
+    submit = st.button('Generate Answer')
 
-submit = st.button('Ask the question')
-
-if submit:
-    st.write('Generating...')
-    output_response = get_response(input)
-    st.write(output_response)
+    if submit:
+        with st.spinner("Generating..."):
+            output_response = q_and_a_chatbot(input)
+            st.write(output_response)
+    
+if __name__ == '__main__':
+    q_and_a_main()
 
