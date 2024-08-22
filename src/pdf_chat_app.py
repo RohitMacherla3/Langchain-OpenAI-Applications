@@ -1,33 +1,15 @@
+import streamlit as st
+from PyPDF2 import PdfReader
+from langchain_text_splitters import CharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, AIMessage
+from htmlTemplates import css, bot_template, user_template 
+
 def pdf_main():  
-    import streamlit as st
-
-    # load data
-    from PyPDF2 import PdfReader
-    from langchain_text_splitters import CharacterTextSplitter
-
-    # vector database
-    from langchain_community.vectorstores import FAISS
-
-    # chatmodel
-    from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-    from langchain.chains import create_history_aware_retriever, create_retrieval_chain
-    from langchain.chains.combine_documents import create_stuff_documents_chain
-    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-    from langchain_core.messages import HumanMessage, AIMessage
-    from htmlTemplates import css, bot_template, user_template 
-
-    # #initializing all secret keys (local app)
-    # import os
-    # from dotenv import load_dotenv
-    # load_dotenv()
-    # OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  
-        
-    #initializing all secret keys (streamlit deployment)
-    headers = {
-        'authorization': st.secrets['OPENAI_API_KEY'],
-        'content_type': 'application/json'
-        }
-    OPENAI_API_KEY = headers['authorization']
 
     #read pdf into a single text and splict into chunks
     def get_text_chunks(pdfs):
@@ -65,7 +47,7 @@ def pdf_main():
         return chunks
 
     def get_conversation_chain(vectorstore):
-        llm = ChatOpenAI(api_key=OPENAI_API_KEY, model_name='gpt-3.5-turbo', temperature=0.1)
+        llm = ChatOpenAI(model_name='gpt-3.5-turbo', temperature=0.1)
         retriever = vectorstore.as_retriever()
         
         contextualize_q_system_prompt = (
@@ -161,7 +143,7 @@ def pdf_main():
                         text_chunks = get_text_chunks(input_pdfs)
                         
                         # convert text to embeddings
-                        embeds = OpenAIEmbeddings(api_key=OPENAI_API_KEY, model='text-embedding-3-small')
+                        embeds = OpenAIEmbeddings(model='text-embedding-3-small')
                         
                         # store the embeddings into a vectore store
                         if text_chunks is not None:
@@ -217,5 +199,5 @@ def pdf_main():
     main()
 
 
-    if __name__ == "__main__":
-        pdf_main()
+if __name__ == "__main__":
+    pdf_main()

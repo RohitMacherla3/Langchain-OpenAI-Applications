@@ -17,4 +17,26 @@ def main():
         pdf_main()
 
 if __name__ == "__main__":
+    
+    # # load api keys from local
+    # import os
+    # from dotenv import load_dotenv
+    # load_dotenv()
+    
+    # OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+    # SERPAPI_API_KEY = os.environ.get('SERPAPI_API_KEY')
+    # TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
+    
+    # load api keys from streamlit secrets
+    headers = {
+        'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
+        'SERPAPI_API_KEY': st.secrets['SERPAPI_API_KEY'],
+        'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
+        'content_type': 'application/json'
+    }
+
+    OPENAI_API_KEY = headers['OPENAI_API_KEY']
+    SERPAPI_API_KEY = headers['SERPAPI_API_KEY']
+    TAVILY_API_KEY = headers['TAVILY_API_KEY']
+    
     main()

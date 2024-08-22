@@ -1,21 +1,22 @@
-from langchain_community.tools import WikipediaQueryRun
-from langchain_community.utilities import WikipediaAPIWrapper
+import streamlit as st
 from langchain.agents import tool
 from pydantic import BaseModel, Field
 import requests, datetime
+from langchain_community.tools import WikipediaQueryRun
+from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_community.tools.tavily_search import TavilySearchResults
 
-# # load keys from local
+
+# # load api keys from local
 # import os
 # from dotenv import load_dotenv
-
 # load_dotenv()
-
+    
 # OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 # SERPAPI_API_KEY = os.environ.get('SERPAPI_API_KEY')
 # TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
-
-
-import streamlit as st
+    
+# load api keys from streamlit secrets
 headers = {
     'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
     'SERPAPI_API_KEY': st.secrets['SERPAPI_API_KEY'],
@@ -27,9 +28,11 @@ OPENAI_API_KEY = headers['OPENAI_API_KEY']
 SERPAPI_API_KEY = headers['SERPAPI_API_KEY']
 TAVILY_API_KEY = headers['TAVILY_API_KEY']
 
+
 # Wikipedia tool
 api_wrapper = WikipediaAPIWrapper(top_k_results=3, doc_content_chars_max=1000)
 wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
+
 
 # Weather tool
 class OpenMeteoInput(BaseModel):
@@ -66,8 +69,4 @@ def get_temperature(latitude, longitude) -> dict:
     return f'The current temperature is {current_temperature}°C'
 
 # tavily search
-from langchain_community.tools.tavily_search import TavilySearchResults
-
 tavily_tool = TavilySearchResults()
-
-
