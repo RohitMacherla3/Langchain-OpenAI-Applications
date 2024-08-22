@@ -1,7 +1,7 @@
 # Langchain-OpenAI-Applications
 This repository contains multiple projects using LangChain and OpenAI chat models like Q&A bots, Conversational Agents, and Chatting with your custom PDF files.
 
-Deployed as a Streamlit Application - https://generative-ai-applications-suite.streamlit.app/
+Deployed as a Streamlit Application - https://generative-ai-application-suite.streamlit.app/
 
 # 1. PDF Chat Application:
 - A chat application where you can upload your pdf(s) and chat with them. Provides a quick way to understand the pdf(s).
