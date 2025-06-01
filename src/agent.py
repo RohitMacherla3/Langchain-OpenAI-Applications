@@ -22,7 +22,7 @@ def agent():
     model = ChatOpenAI(model='gpt-4o-mini', temperature=0)
 
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are helpful but sassy assistant"),
+        ("system", "You are helpful assistant"),
         MessagesPlaceholder(variable_name="chat_history"),
         ("user", "{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad")
@@ -102,15 +102,13 @@ def agent_main():
     st.write(css, unsafe_allow_html=True)
     st.header('Conversational OpenAI Agent')
     st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
-                    unsafe_allow_html=True
-                    )
+                unsafe_allow_html=True)
     st.write("Capabilities: ")
     st.write("1. Default GPT-4o-mini chatbot to answer questions (has memory of previous questions)")
     st.write("2. Web search to get real-time data")
 
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
-    # Only initialize agent_executor if not already present
     if 'agent_executor' not in st.session_state:
         try:
             agent()
@@ -118,32 +116,34 @@ def agent_main():
             st.error(f"Error initializing agent: {e}")
             return
 
-    # Tool selection dropdown (multiselect)
-    tool_options = [
-        ("web_search", "Web Search"),
-        ("wikipedia", "Wikipedia Lookup"),
-        ("finance", "Stock Data"),
-        ("text_analysis", "Text Analysis"),
-        ("wordcloud", "Word Cloud"),
-        ("salary_analysis", "Salary Analysis"),
-        ("ai_learning_path", "AI Learning Path")
-    ]
-    tool_labels = [label for _, label in tool_options]
-    tool_keys = [key for key, _ in tool_options]
-    if 'selected_tools' not in st.session_state:
-        st.session_state.selected_tools = []
-    selected_tool_labels = st.multiselect(
-        "Select tools to use for the next query (optional):",
-        tool_labels,
-        default=[]
-    )
-    st.session_state.selected_tools = [tool_keys[tool_labels.index(lbl)] for lbl in selected_tool_labels if lbl in tool_labels]
+    # Move tool selection to sidebar
+    with st.sidebar:
+        st.write("----------------------------------------------------------------")
+        st.subheader('🛠️ Select from available Tools')
+        tool_options = [
+            ("web_search", "Web Search"),
+            ("wikipedia", "Wikipedia Lookup"),
+            ("finance", "Stock Data"),
+            ("text_analysis", "Text Analysis"),
+            ("wordcloud", "Word Cloud"),
+            ("salary_analysis", "Salary Analysis"),
+            ("ai_learning_path", "AI Learning Path")
+        ]
+        tool_labels = [label for _, label in tool_options]
+        tool_keys = [key for key, _ in tool_options]
+        if 'selected_tools' not in st.session_state:
+            st.session_state.selected_tools = []
+        selected_tool_labels = st.multiselect(
+            "Select tools to use for the next query (optional):",
+            tool_labels,
+            default=[]
+        )
+        st.session_state.selected_tools = [tool_keys[tool_labels.index(lbl)] for lbl in selected_tool_labels if lbl in tool_labels]
+        st.write("----------------------------------------------------------------")
 
-    # Use session state for input text to allow clearing
     if 'input_text' not in st.session_state:
         st.session_state.input_text = ""
 
-    # Create a form to handle Enter key submission
     with st.form(key='input_form', clear_on_submit=True):
         input_text = st.text_input('Ask a question: ', value=st.session_state.input_text, key='input_text_box')
         submit_button = st.form_submit_button('Generate Answer')
@@ -153,7 +153,6 @@ def agent_main():
 
     if input_text and submit_button:
         with st.spinner('Generating answer...'):
-            # If user selected tools, inject tool requests into the question
             if st.session_state.selected_tools:
                 tool_requests = " ".join([f"[{tool}:{input_text}]" for tool in st.session_state.selected_tools])
                 input_text_with_tools = f"{input_text} {tool_requests}"
