@@ -327,7 +327,7 @@ def get_output_response(question):
             st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
 
 def pdf_main():
-    st.header('PDF Chat with Tools 🛠️')
+    # st.header('PDF Chat with Tools 🛠️')
     st.markdown(
         '<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Enhanced PDF Chat. All Rights Reserved.</div>',
         unsafe_allow_html=True
@@ -499,29 +499,51 @@ def pdf_main():
     ]
     if model_type == 'Use pdf of Attention is all you need paper' and default_pdf_available:
         st.markdown('<div style="text-align:center; margin-bottom:10px; font-size:1.2rem; color:#e0e0e0;">How can I help you?</div>', unsafe_allow_html=True)
-        col1, col2 = st.columns([1, 1], gap="large")
-
+        # Custom HTML/CSS for centered, equal-sized buttons
+        st.markdown('''
+            <style>
+            .center-btn-row { display: flex; justify-content: center; gap: 1.5em; margin-bottom: 0.5em; }
+            .center-btn-row button { min-width: 240px !important; max-width: 260px !important; width: 100%; font-size: 1.05rem !important; font-weight: 500; border-radius: 8px; }
+            </style>
+            <div class="center-btn-row">
+                <form action="#" method="post">
+                    <button name="btn_0" type="submit">What is Attention?</button>
+                </form>
+                <form action="#" method="post">
+                    <button name="btn_1" type="submit">What is Self-Attention?</button>
+                </form>
+            </div>
+            <div class="center-btn-row">
+                <form action="#" method="post">
+                    <button name="btn_2" type="submit">What is the difference between them?</button>
+                </form>
+                <form action="#" method="post">
+                    <button name="btn_3" type="submit">Explain Transformers to a 5 year old</button>
+                </form>
+            </div>
+        ''', unsafe_allow_html=True)
+        # Streamlit workaround for button actions
+        btn_clicked = None
+        for i in range(4):
+            if st.session_state.get(f"btn_{i}"):
+                btn_clicked = i
         def handle_default_question(idx):
             if st.session_state.conversation is None:
                 st.warning("Please click the Process button on the sidebar to process the document before asking questions.")
             else:
-                # Directly trigger answer generation
                 question = default_questions[idx]
-                st.session_state.question_input = ""  # Clear input to avoid double trigger
+                st.session_state.question_input = ""
                 get_output_response(question)
-
-        with col1:
-            for i in range(2):
-                st.button(default_questions[i], key=f"btn_{i}", on_click=lambda idx=i: handle_default_question(idx))
-
-        with col2:
-            for i in range(2, 4):
-                st.button(default_questions[i], key=f"btn_{i}", on_click=lambda idx=i: handle_default_question(idx))
+        # Use Streamlit buttons for logic (hidden)
+        col_btns = st.columns(4)
+        for i in range(4):
+            if col_btns[i].button(" ", key=f"btn_{i}", help=default_questions[i]):
+                handle_default_question(i)
 
     # Initialize question input state
     if 'question_input' not in st.session_state:
         st.session_state.question_input = ""
-    
+
     # Create a form for the question input to handle Enter key
     with st.form(key='question_form', clear_on_submit=True):
         question = st.text_input(
@@ -530,34 +552,37 @@ def pdf_main():
             key='question_text_input',
             help="Use [tool:query] format to use tools. Example: What is machine learning? [web_search:latest ML trends]"
         )
-        
         col1, col2 = st.columns(2)
         generate_clicked = col1.form_submit_button('Generate Answer')
         clear_clicked = col2.form_submit_button('Clear Chat')
-    
+
     # Handle question submission (both Enter key and button click)
     if question and generate_clicked:
         if st.session_state.conversation is not None:
             with st.spinner('Generating...'):
-                # If user selected tools, inject tool requests into the question
                 if st.session_state.selected_tools:
-                    # For each selected tool, add a tool request to the question
                     tool_requests = " ".join([f"[{tool}:{question}]" for tool in st.session_state.selected_tools])
                     question_with_tools = f"{question} {tool_requests}"
                 else:
                     question_with_tools = question
                 get_output_response(question_with_tools)
-                # Clear the input after processing
                 st.session_state.question_input = ""
-                # Clear selected tools after processing
                 st.session_state.selected_tools = []
         else:
             st.warning('Please upload a file or use the default file and click process on the side menu')
-    
+
     if clear_clicked:
         st.session_state.chat_history = []
         st.session_state.question_input = ""
         st.rerun()
+
+    # Show chat with latest at the bottom
+    if st.session_state.chat_history:
+        for i, message in enumerate(st.session_state.chat_history):
+            if i % 2 == 0:
+                st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+            else:
+                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
 
 if __name__ == "__main__":
     pdf_main()
