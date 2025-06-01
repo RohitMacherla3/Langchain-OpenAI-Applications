@@ -209,8 +209,6 @@ def get_conversation_chain(vectorstore, model_provider, model_name=None):
         "- finance: Get stock/financial data (use format: finance:SYMBOL)\n"
         "- text_analysis: Analyze text for readability and statistics\n"
         "- wordcloud: Generate a word cloud visualization\n\n"
-        "- salary_analysis: Analyze salary data\n"
-        "- ai_learning_path: Generate a learning path for AI topics\n"
         "When suggesting a tool, use the format: [TOOL:query] (e.g., [web_search:latest AI research])\n\n"
         "Context: {context}"
     ) 
@@ -367,9 +365,7 @@ def pdf_main():
             ("wikipedia", "Wikipedia Lookup"),
             ("finance", "Stock Data"),
             ("text_analysis", "Text Analysis"),
-            ("wordcloud", "Word Cloud"),
-            ("salary_analysis", "Salary Analysis"),
-            ("ai_learning_path", "AI Learning Path")
+            ("wordcloud", "Word Cloud")
         ]
         tool_labels = [label for _, label in tool_options]
         tool_keys = [key for key, _ in tool_options]

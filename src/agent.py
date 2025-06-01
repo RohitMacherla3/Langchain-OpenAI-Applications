@@ -104,8 +104,8 @@ def agent_main():
     st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
                 unsafe_allow_html=True)
     st.write("Capabilities: ")
-    st.write("1. Default GPT-4o-mini chatbot to answer questions (has memory of previous questions)")
-    st.write("2. Web search to get real-time data")
+    st.write("1. Default gpt-4o-mini chatbot to answer questions (has memory of previous questions)")
+    st.write("2. Has tools to perform web search, Wikipedia lookup, stock data retrieval, text analysis, and word cloud generation.")
 
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
@@ -125,9 +125,7 @@ def agent_main():
             ("wikipedia", "Wikipedia Lookup"),
             ("finance", "Stock Data"),
             ("text_analysis", "Text Analysis"),
-            ("wordcloud", "Word Cloud"),
-            ("salary_analysis", "Salary Analysis"),
-            ("ai_learning_path", "AI Learning Path")
+            ("wordcloud", "Word Cloud")
         ]
         tool_labels = [label for _, label in tool_options]
         tool_keys = [key for key, _ in tool_options]
@@ -144,23 +142,25 @@ def agent_main():
     if 'input_text' not in st.session_state:
         st.session_state.input_text = ""
 
-    with st.form(key='input_form', clear_on_submit=True):
-        input_text = st.text_input('Ask a question: ', value=st.session_state.input_text, key='input_text_box')
-        submit_button = st.form_submit_button('Generate Answer')
+    def on_enter():
+        if st.session_state.selected_tools:
+            tool_requests = " ".join([f"[{tool}:{st.session_state.input_text}]" for tool in st.session_state.selected_tools])
+            input_text_with_tools = f"{st.session_state.input_text} {tool_requests}"
+        else:
+            input_text_with_tools = st.session_state.input_text
+        get_response(input_text_with_tools)
+        st.session_state.input_text = ""
+        st.session_state.selected_tools = []
+
+    st.text_input(
+        'Ask a question: ',
+        value=st.session_state.input_text,
+        key='input_text_box',
+        on_change=on_enter
+    )
 
     col1, col2 = st.columns(2)
     clear_chat = col2.button('Clear Chat')
-
-    if input_text and submit_button:
-        with st.spinner('Generating answer...'):
-            if st.session_state.selected_tools:
-                tool_requests = " ".join([f"[{tool}:{input_text}]" for tool in st.session_state.selected_tools])
-                input_text_with_tools = f"{input_text} {tool_requests}"
-            else:
-                input_text_with_tools = input_text
-            get_response(input_text_with_tools)
-            st.session_state.input_text = ""
-            st.session_state.selected_tools = []
 
     if clear_chat:
         st.session_state.chat_history = []
