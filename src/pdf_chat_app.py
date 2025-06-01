@@ -487,7 +487,7 @@ def pdf_main():
         st.info(f"Current Model: {st.session_state.model_provider}" + 
                 (f" - {st.session_state.selected_model_name}" if st.session_state.selected_model_name else ""))
 
-    # Main heading centered
+    # Center the main heading and ensure it appears only once
     st.markdown('<h1 style="text-align:center; margin-top:0.5em; margin-bottom:0.5em; font-size:2.5rem; font-weight:800; color:#fff;">PDF Chat with Tools 🛠️</h1>', unsafe_allow_html=True)
 
     # Default questions for the default PDF
@@ -499,7 +499,8 @@ def pdf_main():
     ]
     if model_type == 'Use pdf of Attention is all you need paper' and default_pdf_available:
         st.markdown('<div style="text-align:center; margin-bottom:10px; font-size:1.2rem; color:#e0e0e0;">How can I help you?</div>', unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns([1, 1], gap="large")
+
         def handle_default_question(idx):
             if st.session_state.conversation is None:
                 st.warning("Please click the Process button on the sidebar to process the document before asking questions.")
@@ -508,16 +509,14 @@ def pdf_main():
                 question = default_questions[idx]
                 st.session_state.question_input = ""  # Clear input to avoid double trigger
                 get_output_response(question)
+
         with col1:
-            if st.button(default_questions[0]):
-                handle_default_question(0)
-            if st.button(default_questions[1]):
-                handle_default_question(1)
+            for i in range(2):
+                st.button(default_questions[i], key=f"btn_{i}", on_click=lambda idx=i: handle_default_question(idx))
+
         with col2:
-            if st.button(default_questions[2]):
-                handle_default_question(2)
-            if st.button(default_questions[3]):
-                handle_default_question(3)
+            for i in range(2, 4):
+                st.button(default_questions[i], key=f"btn_{i}", on_click=lambda idx=i: handle_default_question(idx))
 
     # Initialize question input state
     if 'question_input' not in st.session_state:
