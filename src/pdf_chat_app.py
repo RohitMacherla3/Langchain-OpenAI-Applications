@@ -42,7 +42,7 @@ SHOW_MODEL_SELECTION = os.getenv('SHOW_MODEL_SELECTION', 'false').lower() == 'tr
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 # Default PDF path
-DEFAULT_PDF_PATH = "../docs/attention.pdf"
+DEFAULT_PDF_PATH = "docs/attention.pdf"
 
 def setup_default_pdf_directory():
     """Create docs directory if it doesn't exist and provide instructions"""
