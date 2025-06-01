@@ -486,7 +486,28 @@ def pdf_main():
     if SHOW_MODEL_SELECTION:
         st.info(f"Current Model: {st.session_state.model_provider}" + 
                 (f" - {st.session_state.selected_model_name}" if st.session_state.selected_model_name else ""))
-        
+
+    # Default questions for the default PDF
+    default_questions = [
+        "What is Attention?",
+        "What is Self-Attention?",
+        "What is the difference between them?",
+        "Explain Transformers to a 5 year old"
+    ]
+    if model_type == 'Use pdf of Attention is all you need paper' and default_pdf_available:
+        st.markdown("**Quick Questions:**")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button(default_questions[0]):
+                st.session_state.question_input = default_questions[0]
+            if st.button(default_questions[1]):
+                st.session_state.question_input = default_questions[1]
+        with col2:
+            if st.button(default_questions[2]):
+                st.session_state.question_input = default_questions[2]
+            if st.button(default_questions[3]):
+                st.session_state.question_input = default_questions[3]
+
     # Initialize question input state
     if 'question_input' not in st.session_state:
         st.session_state.question_input = ""

@@ -139,22 +139,22 @@ def agent_main():
         st.session_state.selected_tools = [tool_keys[tool_labels.index(lbl)] for lbl in selected_tool_labels if lbl in tool_labels]
         st.write("----------------------------------------------------------------")
 
-    if 'input_text' not in st.session_state:
-        st.session_state.input_text = ""
+    if 'input_text_box' not in st.session_state:
+        st.session_state.input_text_box = ""
 
     def on_enter():
         if st.session_state.selected_tools:
-            tool_requests = " ".join([f"[{tool}:{st.session_state.input_text}]" for tool in st.session_state.selected_tools])
-            input_text_with_tools = f"{st.session_state.input_text} {tool_requests}"
+            tool_requests = " ".join([f"[{tool}:{st.session_state.input_text_box}]" for tool in st.session_state.selected_tools])
+            input_text_with_tools = f"{st.session_state.input_text_box} {tool_requests}"
         else:
-            input_text_with_tools = st.session_state.input_text
+            input_text_with_tools = st.session_state.input_text_box
         get_response(input_text_with_tools)
-        st.session_state.input_text = ""
+        st.session_state.input_text_box = ""
         st.session_state.selected_tools = []
 
     st.text_input(
         'Ask a question: ',
-        value=st.session_state.input_text,
+        value=st.session_state.input_text_box,
         key='input_text_box',
         on_change=on_enter
     )
@@ -166,7 +166,7 @@ def agent_main():
         st.session_state.chat_history = []
         if 'memory' in st.session_state:
             st.session_state.memory.clear()
-        st.session_state.input_text = ""
+        st.session_state.input_text_box = ""
         st.rerun()
 
 
