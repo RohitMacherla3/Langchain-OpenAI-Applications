@@ -487,6 +487,9 @@ def pdf_main():
         st.info(f"Current Model: {st.session_state.model_provider}" + 
                 (f" - {st.session_state.selected_model_name}" if st.session_state.selected_model_name else ""))
 
+    # Main heading centered
+    st.markdown('<h1 style="text-align:center; margin-top:0.5em; margin-bottom:0.5em; font-size:2.5rem; font-weight:800; color:#fff;">PDF Chat with Tools 🛠️</h1>', unsafe_allow_html=True)
+
     # Default questions for the default PDF
     default_questions = [
         "What is Attention?",
@@ -495,15 +498,16 @@ def pdf_main():
         "Explain Transformers to a 5 year old"
     ]
     if model_type == 'Use pdf of Attention is all you need paper' and default_pdf_available:
-        st.markdown('<div style="display:flex; justify-content:center; align-items:center; margin-bottom:18px;">'
-                    '<span style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(90deg,#708090 60%,#4b5c6b 100%); padding:18px 36px; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.12);">How can I help you?</span>'
-                    '</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align:center; margin-bottom:10px; font-size:1.2rem; color:#e0e0e0;">How can I help you?</div>', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         def handle_default_question(idx):
             if st.session_state.conversation is None:
-                st.info("➡️ Please click the <b>Process</b> button on the sidebar to process the document before asking questions.", icon="ℹ️", unsafe_allow_html=True)
+                st.warning("Please click the Process button on the sidebar to process the document before asking questions.")
             else:
-                st.session_state.question_input = default_questions[idx]
+                # Directly trigger answer generation
+                question = default_questions[idx]
+                st.session_state.question_input = ""  # Clear input to avoid double trigger
+                get_output_response(question)
         with col1:
             if st.button(default_questions[0]):
                 handle_default_question(0)
