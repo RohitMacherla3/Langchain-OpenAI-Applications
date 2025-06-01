@@ -63,6 +63,11 @@ def get_temperature(latitude, longitude) -> str:
     return f'The current temperature is {current_temperature}°C'
 
 # ====== TOOL 4: FINANCIAL DATA ======
+class FinanceInput(BaseModel):
+    symbol: str = Field(..., description="Stock or crypto symbol (e.g., AAPL, BTC-USD)")
+    period: str = Field("1mo", description="Period for historical data (e.g., 1mo, 1y)")
+
+@tool(args_schema=FinanceInput)
 def finance_tool(symbol, period="1mo"):
     """Get financial data for stocks/crypto"""
     try:
@@ -98,6 +103,10 @@ def finance_tool(symbol, period="1mo"):
         return {"error": f"Financial data retrieval failed: {str(e)}"}
 
 # ====== TOOL 5: TEXT ANALYSIS ======
+class TextAnalysisInput(BaseModel):
+    text: str = Field(..., description="Text to analyze")
+
+@tool(args_schema=TextAnalysisInput)
 def text_analysis_tool(text):
     """Analyze text for readability, sentiment, and statistics"""
     try:
@@ -137,6 +146,10 @@ def text_analysis_tool(text):
         return {"error": f"Text analysis failed: {str(e)}"}
 
 # ====== TOOL 6: WORD CLOUD GENERATOR ======
+class WordCloudInput(BaseModel):
+    text: str = Field(..., description="Text to generate word cloud from")
+
+@tool(args_schema=WordCloudInput)
 def generate_wordcloud_tool(text):
     """Generate a word cloud from text"""
     try:
