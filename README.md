@@ -6,7 +6,8 @@ Deployed as a Streamlit Application - https://generative-ai-application-suite.st
 # 1. PDF Chat Application:
 - A chat application where you can upload your pdf(s) and chat with them. Provides a quick way to understand the pdf(s).
 
-<img width="1377" alt="image" src="https://github.com/user-attachments/assets/6ab20a03-d19f-4134-946e-76251ab700ce">
+![image](https://github.com/user-attachments/assets/cad44356-1ef7-40a0-8488-235833dca027)
+
 
 
 
