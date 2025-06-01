@@ -16,6 +16,7 @@ import nltk
 from collections import Counter
 import re
 from wordcloud import WordCloud
+from alpha_vantage.timeseries import TimeSeries
 
 
 # Note: The 'headers' dictionary is defined for API keys but is not used in requests below.
@@ -75,7 +76,7 @@ def finance_tool(symbol, period="1mo"):
         hist = ticker.history(period=period)
         info = ticker.info
         if hist.empty:
-            return {"error": f"No financial data found for symbol: {symbol}"}
+            return {"error": f"No financial data found for symbol: {symbol}. This may be due to an invalid symbol, rate limiting, or Yahoo Finance blocking automated requests. Please try again later or check the symbol on Yahoo Finance directly."}
         current_price = hist['Close'].iloc[-1]
         change = hist['Close'].iloc[-1] - hist['Close'].iloc[-2] if len(hist) > 1 else 0
         change_percent = (change / hist['Close'].iloc[-2] * 100) if len(hist) > 1 else 0
@@ -100,7 +101,7 @@ def finance_tool(symbol, period="1mo"):
             'company_name': info.get('longName', symbol)
         }
     except Exception as e:
-        return {"error": f"Financial data retrieval failed: {str(e)}"}
+        return {"error": f"Financial data retrieval failed for symbol '{symbol}': {str(e)}. This may be due to rate limiting or Yahoo Finance blocking automated requests. Please try again later or check the symbol on Yahoo Finance directly."}
 
 # ====== TOOL 5: TEXT ANALYSIS ======
 class TextAnalysisInput(BaseModel):
@@ -175,3 +176,49 @@ def generate_wordcloud_tool(text):
         }
     except Exception as e:
         return {"error": f"Word cloud generation failed: {str(e)}"}
+
+# ====== TOOL 7: ALPHA VANTAGE FINANCE DATA ======
+class AlphaVantageFinanceInput(BaseModel):
+    symbol: str = Field(..., description="Stock symbol (e.g., AAPL, MSFT)")
+    interval: str = Field("1min", description="Time interval between data points (1min, 5min, 15min, 30min, 60min, daily, weekly, monthly)")
+    outputsize: str = Field("compact", description="compact (latest 100 points) or full (full-length data)")
+
+@tool(args_schema=AlphaVantageFinanceInput)
+def alpha_vantage_finance_tool(symbol, interval="daily", outputsize="compact"):
+    """Get stock price data using Alpha Vantage API (free, requires API key)."""
+    try:
+        api_key = st.secrets.get('ALPHA_VANTAGE_API_KEY', None)
+        if not api_key:
+            return {"error": "Alpha Vantage API key not found in Streamlit secrets. Please add 'ALPHA_VANTAGE_API_KEY' to your secrets."}
+        ts = TimeSeries(key=api_key, output_format='pandas')
+        if interval in ["daily", "weekly", "monthly"]:
+            func_map = {
+                "daily": ts.get_daily,
+                "weekly": ts.get_weekly,
+                "monthly": ts.get_monthly
+            }
+            data, meta = func_map[interval](symbol=symbol, outputsize=outputsize)
+        else:
+            data, meta = ts.get_intraday(symbol=symbol, interval=interval, outputsize=outputsize)
+        if data.empty:
+            return {"error": f"No data found for symbol: {symbol}."}
+        # Plot closing price
+        fig, ax = plt.subplots(figsize=(10, 6))
+        data['4. close'].plot(ax=ax, title=f"{symbol} - {interval.capitalize()} Closing Price")
+        ax.set_ylabel('Price (USD)')
+        ax.grid(True)
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png', bbox_inches='tight')
+        buffer.seek(0)
+        chart_base64 = base64.b64encode(buffer.getvalue()).decode()
+        plt.close()
+        latest_close = data['4. close'].iloc[-1]
+        return {
+            'symbol': symbol,
+            'latest_close': round(latest_close, 2),
+            'interval': interval,
+            'chart': chart_base64,
+            'meta': meta
+        }
+    except Exception as e:
+        return {"error": f"Alpha Vantage data retrieval failed for symbol '{symbol}': {str(e)}"}

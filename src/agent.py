@@ -105,7 +105,7 @@ def agent_main():
                     unsafe_allow_html=True
                     )
     st.write("Capabilities: ")
-    st.write("1. Default ChatGPT-4o-mini chatbot to answer questions (has memory of previous questions)")
+    st.write("1. Default GPT-4o-mini chatbot to answer questions (has memory of previous questions)")
     st.write("2. Web search to get real-time data")
 
     if 'chat_history' not in st.session_state:
@@ -117,6 +117,27 @@ def agent_main():
         except Exception as e:
             st.error(f"Error initializing agent: {e}")
             return
+
+    # Tool selection dropdown (multiselect)
+    tool_options = [
+        ("web_search", "Web Search"),
+        ("wikipedia", "Wikipedia Lookup"),
+        ("finance", "Stock Data"),
+        ("text_analysis", "Text Analysis"),
+        ("wordcloud", "Word Cloud"),
+        ("salary_analysis", "Salary Analysis"),
+        ("ai_learning_path", "AI Learning Path")
+    ]
+    tool_labels = [label for _, label in tool_options]
+    tool_keys = [key for key, _ in tool_options]
+    if 'selected_tools' not in st.session_state:
+        st.session_state.selected_tools = []
+    selected_tool_labels = st.multiselect(
+        "Select tools to use for the next query (optional):",
+        tool_labels,
+        default=[]
+    )
+    st.session_state.selected_tools = [tool_keys[tool_labels.index(lbl)] for lbl in selected_tool_labels if lbl in tool_labels]
 
     # Use session state for input text to allow clearing
     if 'input_text' not in st.session_state:
@@ -132,13 +153,18 @@ def agent_main():
 
     if input_text and submit_button:
         with st.spinner('Generating answer...'):
-            get_response(input_text)
-            # Clear input after submission
+            # If user selected tools, inject tool requests into the question
+            if st.session_state.selected_tools:
+                tool_requests = " ".join([f"[{tool}:{input_text}]" for tool in st.session_state.selected_tools])
+                input_text_with_tools = f"{input_text} {tool_requests}"
+            else:
+                input_text_with_tools = input_text
+            get_response(input_text_with_tools)
             st.session_state.input_text = ""
+            st.session_state.selected_tools = []
 
     if clear_chat:
         st.session_state.chat_history = []
-        # Also reset memory to clear conversation context
         if 'memory' in st.session_state:
             st.session_state.memory.clear()
         st.session_state.input_text = ""
