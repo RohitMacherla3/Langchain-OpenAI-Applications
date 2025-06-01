@@ -1,5 +1,5 @@
 import streamlit as st
-from tools import get_temperature, wiki_tool, tavily_tool
+from tools import get_temperature, wiki_tool, tavily_tool, finance_tool, text_analysis_tool, generate_wordcloud_tool
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
@@ -23,41 +23,41 @@ def agent():
         MessagesPlaceholder(variable_name="agent_scratchpad")
     ])
 
-    tools = [get_temperature, wiki_tool, tavily_tool]
-    functions = [convert_to_openai_function(i)for i in  tools]
+    tools = [get_temperature, wiki_tool, tavily_tool, finance_tool, text_analysis_tool, generate_wordcloud_tool]
+    functions = [convert_to_openai_function(i) for i in tools]
 
-    agent_model = model.bind(functions = functions)
+    agent_model = model.bind(functions=functions)
     output_parser = OpenAIFunctionsAgentOutputParser()
 
     st.session_state.agent_chain = RunnablePassthrough.assign(
-        agent_scratchpad= lambda x: format_to_openai_functions(x["intermediate_steps"])
+        agent_scratchpad=lambda x: format_to_openai_functions(x["intermediate_steps"])
     ) | prompt | agent_model | output_parser
 
-    st.session_state.memory = ConversationBufferMemory(return_messages=True,memory_key="chat_history")
+    st.session_state.memory = ConversationBufferMemory(return_messages=True, memory_key="chat_history")
     st.session_state.agent_executor = AgentExecutor(agent=st.session_state.agent_chain, tools=tools, verbose=False, memory=st.session_state.memory)
-        
     return st.session_state.agent_executor
 
 
 # function to get the result from the agent and display to the user
 def get_response(input_text):
-        
-    response = st.session_state.agent_executor.invoke({"input": input_text})
+    try:
+        response = st.session_state.agent_executor.invoke({"input": input_text})
+        # Use .get for safety in case 'output' key is missing
+        output = response.get('output', str(response))
+    except Exception as e:
+        output = f"[Error generating response: {e}]"
     st.session_state.chat_history.append(HumanMessage(content=input_text))
-    st.session_state.chat_history.append(AIMessage(content=response['output']))
-            
+    st.session_state.chat_history.append(AIMessage(content=output))
     for i, message in enumerate(reversed(st.session_state.chat_history)):
-        if i %2 == 0:
+        if i % 2 == 0:
             st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
         else:
             st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-            
+
 
 # main function to encapsulate all the functionality
 def agent_main():
     st.write(css, unsafe_allow_html=True)
-
-    # st.set_page_config(page_title = "Conversational Agent")
     st.header('Conversational OpenAI Agent')
     st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
                     unsafe_allow_html=True
@@ -68,21 +68,34 @@ def agent_main():
 
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
-        
-    st.session_state.agent_executor = agent()
+    # Only initialize agent_executor if not already present
+    if 'agent_executor' not in st.session_state:
+        agent()
 
-    input_text = st.text_input('Ask a question: ')
+    # Use session state for input text to allow clearing
+    if 'input_text' not in st.session_state:
+        st.session_state.input_text = ""
+
+    input_text = st.text_input('Ask a question: ', value=st.session_state.input_text, key='input_text_box')
     col1, col2 = st.columns(2)
-    query =col1.button('Generate Answer')
+    query = col1.button('Generate Answer')
     clear_chat = col2.button('Clear Chat')
-    
+
     if input_text:
         if query:
             with st.spinner('Generating answer...'):
                 get_response(input_text)
-                
+                # Clear input after submission
+                st.session_state.input_text = ""
+
     if clear_chat:
-            st.session_state.chat_history = []
-                
+        st.session_state.chat_history = []
+        # Also reset memory to clear conversation context
+        if 'memory' in st.session_state:
+            st.session_state.memory.clear()
+        st.session_state.input_text = ""
+        st.rerun()
+
+
 if __name__ == '__main__':
     agent_main()
