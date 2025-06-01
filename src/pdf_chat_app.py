@@ -500,20 +500,22 @@ def pdf_main():
     if model_type == 'Use pdf of Attention is all you need paper' and default_pdf_available:
         st.markdown('<div style="text-align:center; margin-bottom:18px; font-size:1.2rem; color:#e0e0e0;">How can I help you?</div>', unsafe_allow_html=True)
         st.write("")  # vertical space
-        col1, col2, col3, col4 = st.columns([1,1,1,1], gap="large")
-        btn_labels = default_questions
+        # First row
+        row1_col1, row1_col2, _, _ = st.columns([1,1,1e-9,1e-9])
         btn_clicked = None
-        with col1:
-            if st.button(btn_labels[0], key="btn_0", use_container_width=True):
+        with row1_col1:
+            if st.button(default_questions[0], key="btn_0", use_container_width=True):
                 btn_clicked = 0
-        with col2:
-            if st.button(btn_labels[1], key="btn_1", use_container_width=True):
+        with row1_col2:
+            if st.button(default_questions[1], key="btn_1", use_container_width=True):
                 btn_clicked = 1
-        with col3:
-            if st.button(btn_labels[2], key="btn_2", use_container_width=True):
+        # Second row
+        row2_col1, row2_col2, _, _ = st.columns([1,1,1e-9,1e-9])
+        with row2_col1:
+            if st.button(default_questions[2], key="btn_2", use_container_width=True):
                 btn_clicked = 2
-        with col4:
-            if st.button(btn_labels[3], key="btn_3", use_container_width=True):
+        with row2_col2:
+            if st.button(default_questions[3], key="btn_3", use_container_width=True):
                 btn_clicked = 3
         def handle_default_question(idx):
             if st.session_state.conversation is None:
