@@ -90,11 +90,13 @@ def get_response(input_text):
         logger.error(f"Error during response generation: {e}")
     st.session_state.chat_history.append(HumanMessage(content=input_text))
     st.session_state.chat_history.append(AIMessage(content=output))
-    for i, message in enumerate(reversed(st.session_state.chat_history)):
-        if i % 2 == 0:
-            st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-        else:
-            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+    # Show chat with latest at the bottom
+    if st.session_state.chat_history:
+        for i, message in enumerate(st.session_state.chat_history):
+            if i % 2 == 0:
+                st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+            else:
+                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
 
 
 # main function to encapsulate all the functionality
