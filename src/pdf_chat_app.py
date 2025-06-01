@@ -495,18 +495,25 @@ def pdf_main():
         "Explain Transformers to a 5 year old"
     ]
     if model_type == 'Use pdf of Attention is all you need paper' and default_pdf_available:
-        st.markdown("**Quick Questions:**")
+        st.markdown('<div style="display:flex; justify-content:center; align-items:center; margin-bottom:18px;">'
+                    '<span style="font-size:2.2rem; font-weight:700; color:#fff; background:linear-gradient(90deg,#708090 60%,#4b5c6b 100%); padding:18px 36px; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.12);">How can I help you?</span>'
+                    '</div>', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
+        def handle_default_question(idx):
+            if st.session_state.conversation is None:
+                st.info("➡️ Please click the <b>Process</b> button on the sidebar to process the document before asking questions.", icon="ℹ️", unsafe_allow_html=True)
+            else:
+                st.session_state.question_input = default_questions[idx]
         with col1:
             if st.button(default_questions[0]):
-                st.session_state.question_input = default_questions[0]
+                handle_default_question(0)
             if st.button(default_questions[1]):
-                st.session_state.question_input = default_questions[1]
+                handle_default_question(1)
         with col2:
             if st.button(default_questions[2]):
-                st.session_state.question_input = default_questions[2]
+                handle_default_question(2)
             if st.button(default_questions[3]):
-                st.session_state.question_input = default_questions[3]
+                handle_default_question(3)
 
     # Initialize question input state
     if 'question_input' not in st.session_state:
