@@ -256,75 +256,62 @@ def get_output_response(question):
         HumanMessage(content=question), 
         AIMessage(content=response.get('answer', str(response)))
     ])
-    
-    # Display the conversation (no tool results display)
-    for i, message in enumerate(reversed(st.session_state.chat_history)):
+
+    # Display the conversation in chronological order (oldest to newest)
+    for i, message in enumerate(st.session_state.chat_history):
         if i % 2 == 0:
+            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+        else:
             st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-        else:
-            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-    
-    # Display the conversation
-    for i, message in enumerate(reversed(st.session_state.chat_history)):
-        if i % 2 == 0:
-            # AI message - check for tool results
-            if i == 0 and tool_results:  # Most recent AI message
-                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-                
-                # Display tool results
-                for tool_result in tool_results:
-                    st.write(f"**🔧 Tool Used: {tool_result['tool'].title()}**")
-                    
-                    if 'error' in tool_result['result']:
-                        st.error(f"Tool Error: {tool_result['result']['error']}")
-                    else:
-                        # Display results based on tool type
-                        if tool_result['tool'] == 'web_search':
-                            for result in tool_result['result']:
-                                if 'url' in result:
-                                    st.write(f"**{result['title']}**")
-                                    st.write(f"URL: {result['url']}")
-                                    st.write(f"Snippet: {result['snippet'][:200]}...")
-                                    st.write("---")
-                        
-                        elif tool_result['tool'] == 'wikipedia':
-                            for result in tool_result['result']:
-                                st.write(f"**{result['title']}**")
-                                st.write(result['summary'])
-                                st.write(f"[Read more]({result['url']})")
-                                st.write("---")
-                        
-                        elif tool_result['tool'] == 'finance':
-                            result = tool_result['result']
-                            st.write(f"**{result['company_name']} ({result['symbol']})**")
-                            st.write(f"Current Price: ${result['current_price']}")
-                            st.write(f"Change: ${result['change']} ({result['change_percent']:.2f}%)")
-                            if 'chart' in result:
-                                st.image(base64.b64decode(result['chart']))
-                        
-                        elif tool_result['tool'] == 'text_analysis':
-                            result = tool_result['result']
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                st.write("**Text Statistics:**")
-                                st.write(f"- Words: {result['word_count']}")
-                                st.write(f"- Characters: {result['character_count']}")
-                                st.write(f"- Sentences: {result['sentence_count']}")
-                            with col2:
-                                st.write("**Readability:**")
-                                st.write(f"- Reading Level: {result['reading_level']}")
-                                st.write(f"- Flesch Score: {result['flesch_reading_ease']}")
-                                st.write(f"- Grade Level: {result['flesch_kincaid_grade']}")
-                        
-                        elif tool_result['tool'] == 'wordcloud':
-                            if 'wordcloud' in tool_result['result']:
-                                st.image(base64.b64decode(tool_result['result']['wordcloud']))
-                    
-                    st.write("---")
+
+    # Display tool results for the most recent AI message if any
+    if tool_results:
+        # Only display after the last bot message
+        for tool_result in tool_results:
+            st.write(f"**🔧 Tool Used: {tool_result['tool'].title()}**")
+            if 'error' in tool_result['result']:
+                st.error(f"Tool Error: {tool_result['result']['error']}")
             else:
-                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-        else:
-            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+                if tool_result['tool'] == 'web_search':
+                    for result in tool_result['result']:
+                        if 'url' in result:
+                            st.write(f"**{result['title']}**")
+                            st.write(f"URL: {result['url']}")
+                            st.write(f"Snippet: {result['snippet'][:200]}...")
+                            st.write("---")
+                elif tool_result['tool'] == 'wikipedia':
+                    for result in tool_result['result']:
+                        st.write(f"**{result['title']}**")
+                        st.write(result['summary'])
+                        st.write(f"[Read more]({result['url']})")
+                        st.write("---")
+                elif tool_result['tool'] == 'finance':
+                    result = tool_result['result']
+                    st.write(f"**{result['company_name']} ({result['symbol']})**")
+                    st.write(f"Current Price: ${result['current_price']}")
+                    st.write(f"Change: ${result['change']} ({result['change_percent']:.2f}%)")
+                    if 'chart' in result:
+                        st.image(base64.b64decode(result['chart']))
+                elif tool_result['tool'] == 'text_analysis':
+                    result = tool_result['result']
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.write("**Text Statistics:**")
+                        st.write(f"- Words: {result['word_count']}")
+                        st.write(f"- Characters: {result['character_count']}")
+                        st.write(f"- Sentences: {result['sentence_count']}")
+                    with col2:
+                        st.write("**Readability:**")
+                        st.write(f"- Reading Level: {result['reading_level']}")
+                        st.write(f"- Flesch Score: {result['flesch_reading_ease']}")
+                        st.write(f"- Grade Level: {result['flesch_kincaid_grade']}")
+                elif tool_result['tool'] == 'wordcloud':
+                    if 'wordcloud' in tool_result['result']:
+                        st.image(base64.b64decode(tool_result['result']['wordcloud']))
+            
+            st.write("---")
+    else:
+        st.session_state.chat_history.pop()  # Remove the last AI message if no tool results
 
 def pdf_main():
     # st.header('PDF Chat with Tools 🛠️')
