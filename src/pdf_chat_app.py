@@ -522,8 +522,8 @@ def pdf_main():
 
     # --- Move chat rendering to the top, before input box and controls ---
     if st.session_state.chat_history_pdf:
-        for i, message in enumerate(st.session_state.chat_history_pdf):
-            if i % 2 == 0:
+        for message in st.session_state.chat_history_pdf:
+            if isinstance(message, HumanMessage):
                 st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
             else:
                 st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
