@@ -513,9 +513,10 @@ def pdf_main():
                 st.session_state.question_input = ""
                 st.session_state.skip_next_form_submit = True  # Prevent double submission
                 get_output_response(question)
-        if btn_clicked is not None:
-            handle_default_question(btn_clicked)
-        st.write("")  # vertical space
+                st.stop()  # Stop further script execution to prevent form from running
+    if btn_clicked is not None:
+        handle_default_question(btn_clicked)
+    st.write("")  # vertical space
 
     # Initialize question input state
     if 'question_input' not in st.session_state:
