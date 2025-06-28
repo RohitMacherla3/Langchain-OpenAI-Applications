@@ -87,8 +87,8 @@ def get_response(input_text):
     except Exception as e:
         output = f"[Error generating response: {e}]"
         logger.error(f"Error during response generation: {e}")
-    st.session_state.chat_history.append(HumanMessage(content=input_text))
-    st.session_state.chat_history.append(AIMessage(content=output))
+    st.session_state.chat_history_agent.append(HumanMessage(content=input_text))
+    st.session_state.chat_history_agent.append(AIMessage(content=output))
     # Removed chat rendering from here
 
 
@@ -100,8 +100,9 @@ def agent_main():
     st.write("1. Default gpt-4o-mini chatbot to answer questions (has memory of previous questions)")
     st.write("2. Has tools to perform web search, Wikipedia lookup, stock data retrieval, text analysis, and word cloud generation.")
 
-    if 'chat_history' not in st.session_state:
-        st.session_state.chat_history = []
+    # Use dedicated chat history for agent
+    if 'chat_history_agent' not in st.session_state:
+        st.session_state.chat_history_agent = []
     if 'agent_executor' not in st.session_state:
         try:
             agent()
@@ -156,15 +157,15 @@ def agent_main():
     clear_chat = col2.button('Clear Chat')
 
     if clear_chat:
-        st.session_state.chat_history = []
+        st.session_state.chat_history_agent = []
         if 'memory' in st.session_state:
             st.session_state.memory.clear()
         st.session_state.input_text_box = ""
         st.rerun()
 
     # Render chat messages below header and input
-    if st.session_state.chat_history:
-        for i, message in enumerate(st.session_state.chat_history):
+    if st.session_state.chat_history_agent:
+        for i, message in enumerate(st.session_state.chat_history_agent):
             if i % 2 == 0:
                 st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
             else:

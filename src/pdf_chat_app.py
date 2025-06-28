@@ -245,20 +245,20 @@ def get_output_response(question):
     # Get response from conversational chain
     response = st.session_state.conversation.invoke({
         "input": question, 
-        "chat_history": st.session_state.chat_history
+        "chat_history": st.session_state.chat_history_pdf
     })
     
     # Add tool results to the response if any (but do not display them)
     if tool_results:
         response['tool_results'] = tool_results
     
-    st.session_state.chat_history.extend([
+    st.session_state.chat_history_pdf.extend([
         HumanMessage(content=question), 
         AIMessage(content=response.get('answer', str(response)))
     ])
 
     # Display the conversation in chronological order (oldest to newest)
-    for i, message in enumerate(st.session_state.chat_history):
+    for i, message in enumerate(st.session_state.chat_history_pdf):
         if i % 2 == 0:
             st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
         else:
@@ -311,7 +311,7 @@ def get_output_response(question):
             
             st.write("---")
     else:
-        st.session_state.chat_history.pop()  # Remove the last AI message if no tool results
+        st.session_state.chat_history_pdf.pop()  # Remove the last AI message if no tool results
 
 def pdf_main():
     # Removed footer and copyright
@@ -319,16 +319,15 @@ def pdf_main():
 
     # Reset chat history and conversation if switching from another app
     if st.session_state.get('app_switched_to_pdf_chat', False):
-        st.session_state.chat_history = []
+        st.session_state.chat_history_pdf = []
         st.session_state.conversation = None
         st.session_state.app_switched_to_pdf_chat = False
 
     # Initialize session state
     if 'conversation' not in st.session_state:
         st.session_state.conversation = None 
-        
-    if 'chat_history' not in st.session_state:
-        st.session_state.chat_history = []
+    if 'chat_history_pdf' not in st.session_state:
+        st.session_state.chat_history_pdf = []
         
     if 'selected_model_type' not in st.session_state:
         st.session_state.selected_model_type = None
@@ -522,8 +521,8 @@ def pdf_main():
         st.session_state.question_input = ""
 
     # --- Move chat rendering to the top, before input box and controls ---
-    if st.session_state.chat_history:
-        for i, message in enumerate(st.session_state.chat_history):
+    if st.session_state.chat_history_pdf:
+        for i, message in enumerate(st.session_state.chat_history_pdf):
             if i % 2 == 0:
                 st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
             else:
@@ -557,12 +556,9 @@ def pdf_main():
             st.warning('Please upload a file or use the default file and click process on the side menu')
 
     if clear_clicked:
-        st.session_state.chat_history = []
+        st.session_state.chat_history_pdf = []
         st.session_state.question_input = ""
         st.rerun()
-
-    # Remove the duplicate chat rendering at the bottom
-    # ...existing code...
 
 if __name__ == "__main__":
     pdf_main()

@@ -12,15 +12,20 @@ def main():
         st.session_state.last_app = None
     application = st.sidebar.radio(" ", ['Q & A Chat Bot', 'Conversational Agent', 'Chat with your PDFs'])
 
+    # Use separate chat histories for each app
+    if 'chat_history_agent' not in st.session_state:
+        st.session_state.chat_history_agent = []
+    if 'chat_history_pdf' not in st.session_state:
+        st.session_state.chat_history_pdf = []
+
     # Clear chat history and related state on app switch
     if st.session_state.last_app != application:
-        if 'chat_history' in st.session_state:
-            st.session_state.chat_history = []
-        if 'memory' in st.session_state:
+        if application == 'Conversational Agent':
+            st.session_state.chat_history_agent = []
             st.session_state.memory = None
-        if 'conversation' in st.session_state:
+        elif application == 'Chat with your PDFs':
+            st.session_state.chat_history_pdf = []
             st.session_state.conversation = None
-        if application == 'Chat with your PDFs':
             st.session_state.app_switched_to_pdf_chat = True
         st.session_state.last_app = application
 
