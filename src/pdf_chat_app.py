@@ -310,8 +310,9 @@ def get_output_response(question):
                         st.image(base64.b64decode(tool_result['result']['wordcloud']))
             
             st.write("---")
-    else:
-        st.session_state.chat_history_pdf.pop()  # Remove the last AI message if no tool results
+    # Remove this block to prevent answers from vanishing
+    # else:
+    #     st.session_state.chat_history_pdf.pop()  # Remove the last AI message if no tool results
 
 def pdf_main():
     # Removed footer and copyright
