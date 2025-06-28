@@ -511,6 +511,7 @@ def pdf_main():
             else:
                 question = default_questions[idx]
                 st.session_state.question_input = ""
+                st.session_state.skip_next_form_submit = True  # Prevent double submission
                 get_output_response(question)
         if btn_clicked is not None:
             handle_default_question(btn_clicked)
@@ -542,7 +543,9 @@ def pdf_main():
 
     # Handle question submission (both Enter key and button click)
     if question and generate_clicked:
-        if st.session_state.conversation is not None:
+        if st.session_state.get('skip_next_form_submit', False):
+            st.session_state.skip_next_form_submit = False  # Reset flag
+        elif st.session_state.conversation is not None:
             with st.spinner('Generating...'):
                 if st.session_state.selected_tools:
                     tool_requests = " ".join([f"[{tool}:{question}]" for tool in st.session_state.selected_tools])
