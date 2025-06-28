@@ -257,13 +257,6 @@ def get_output_response(question):
         AIMessage(content=response.get('answer', str(response)))
     ])
 
-    # Display the conversation in chronological order (oldest to newest)
-    for i, message in enumerate(st.session_state.chat_history_pdf):
-        if i % 2 == 0:
-            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-        else:
-            st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-
     # Display tool results for the most recent AI message if any
     if tool_results:
         # Only display after the last bot message
@@ -554,8 +547,9 @@ def pdf_main():
                 else:
                     question_with_tools = question
                 get_output_response(question_with_tools)
-                st.session_state.question_input = ""
+                st.session_state.question_input = ""  # Clear input after handling
                 st.session_state.selected_tools = []
+                st.rerun()  # Force rerun so chat history is updated immediately
         else:
             st.warning('Please upload a file or use the default file and click process on the side menu')
 

@@ -19,15 +19,15 @@ from wordcloud import WordCloud
 from alpha_vantage.timeseries import TimeSeries
 
 
-# Note: The 'headers' dictionary is defined for API keys but is not used in requests below.
-headers = {
-    'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
-    'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
-    'content_type': 'application/json'
-}
+# # Note: The 'headers' dictionary is defined for API keys but is not used in requests below.
+# headers = {
+#     'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
+#     'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
+#     'content_type': 'application/json'
+# }
 
-OPENAI_API_KEY = headers['OPENAI_API_KEY']
-TAVILY_API_KEY = headers['TAVILY_API_KEY']
+# OPENAI_API_KEY = headers['OPENAI_API_KEY']
+# TAVILY_API_KEY = headers['TAVILY_API_KEY']
 
 # ====== TOOL 1: Wikipedia ======
 api_wrapper = WikipediaAPIWrapper(top_k_results=3, doc_content_chars_max=1000)

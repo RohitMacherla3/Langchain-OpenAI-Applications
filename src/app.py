@@ -1,7 +1,41 @@
+import os
+from dotenv import load_dotenv
+import streamlit as st
+
+
+def load_keys(load_local=False):
+    if load_local:
+        load_dotenv()
+        OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+        SERPAPI_API_KEY = os.environ.get('SERPAPI_API_KEY')
+        TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
+    else:
+        headers = {
+            'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
+            'SERPAPI_API_KEY': st.secrets['SERPAPI_API_KEY'],
+            'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
+            'content_type': 'application/json'
+        }
+        
+        OPENAI_API_KEY = headers['OPENAI_API_KEY']
+        SERPAPI_API_KEY = headers['SERPAPI_API_KEY']
+        TAVILY_API_KEY = headers['TAVILY_API_KEY']
+    
+    return OPENAI_API_KEY, SERPAPI_API_KEY, TAVILY_API_KEY
+
+# Set environment variables before any other imports
+load_local = True
+OPENAI_API_KEY, SERPAPI_API_KEY, TAVILY_API_KEY = load_keys(load_local=load_local)
+if OPENAI_API_KEY:
+    os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+if SERPAPI_API_KEY:
+    os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
+if TAVILY_API_KEY:
+    os.environ["TAVILY_API_KEY"] = TAVILY_API_KEY
+
 from agent import agent_main
 from QnA_app import q_and_a_main
 from pdf_chat_app import pdf_main
-import streamlit as st
 
 
 def main():
@@ -36,27 +70,6 @@ def main():
     elif application == 'Chat with your PDFs':
         pdf_main()
 
-if __name__ == "__main__":
-    
-    # # load api keys from local
-    # import os
-    # from dotenv import load_dotenv
-    # load_dotenv()
-    
-    # OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-    # SERPAPI_API_KEY = os.environ.get('SERPAPI_API_KEY')
-    # TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY')
-    
-    # load api keys from streamlit secrets
-    headers = {
-        'OPENAI_API_KEY': st.secrets['OPENAI_API_KEY'],
-        'SERPAPI_API_KEY': st.secrets['SERPAPI_API_KEY'],
-        'TAVILY_API_KEY': st.secrets['TAVILY_API_KEY'],
-        'content_type': 'application/json'
-    }
 
-    OPENAI_API_KEY = headers['OPENAI_API_KEY']
-    SERPAPI_API_KEY = headers['SERPAPI_API_KEY']
-    TAVILY_API_KEY = headers['TAVILY_API_KEY']
-    
+if __name__ == "__main__":
     main()
