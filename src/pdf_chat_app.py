@@ -314,11 +314,7 @@ def get_output_response(question):
         st.session_state.chat_history.pop()  # Remove the last AI message if no tool results
 
 def pdf_main():
-    # st.header('PDF Chat with Tools 🛠️')
-    st.markdown(
-        '<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Enhanced PDF Chat. All Rights Reserved.</div>',
-        unsafe_allow_html=True
-    )
+    # Removed footer and copyright
     st.write(css, unsafe_allow_html=True)
         
     # Initialize session state
