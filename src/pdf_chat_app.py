@@ -316,7 +316,13 @@ def get_output_response(question):
 def pdf_main():
     # Removed footer and copyright
     st.write(css, unsafe_allow_html=True)
-        
+
+    # Reset chat history and conversation if switching from another app
+    if st.session_state.get('app_switched_to_pdf_chat', False):
+        st.session_state.chat_history = []
+        st.session_state.conversation = None
+        st.session_state.app_switched_to_pdf_chat = False
+
     # Initialize session state
     if 'conversation' not in st.session_state:
         st.session_state.conversation = None 
