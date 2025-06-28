@@ -9,9 +9,6 @@ def q_and_a_chatbot(input):
 
 def q_and_a_main():
     st.header('Q&A Bot Powered by OpenAI and LangChain')
-    st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
-                    unsafe_allow_html=True
-                    )
     st.write("Capabilities: Uses gpt-4o-mini to generate answers. It has no memory and each question is handled individually")
 
     if 'output_response' not in st.session_state:

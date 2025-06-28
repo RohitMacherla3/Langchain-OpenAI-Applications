@@ -83,28 +83,19 @@ def agent():
 def get_response(input_text):
     try:
         response = st.session_state.agent_executor.invoke({"input": input_text})
-        # Use .get for safety in case 'output' key is missing
         output = response.get('output', str(response))
     except Exception as e:
         output = f"[Error generating response: {e}]"
         logger.error(f"Error during response generation: {e}")
     st.session_state.chat_history.append(HumanMessage(content=input_text))
     st.session_state.chat_history.append(AIMessage(content=output))
-    # Show chat with latest at the bottom
-    if st.session_state.chat_history:
-        for i, message in enumerate(st.session_state.chat_history):
-            if i % 2 == 0:
-                st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-            else:
-                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+    # Removed chat rendering from here
 
 
 # main function to encapsulate all the functionality
 def agent_main():
     st.write(css, unsafe_allow_html=True)
     st.header('Conversational OpenAI Agent')
-    st.markdown('<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #708090; padding: 10px; text-align: center;">&copy; 2024 Rohit Macherla. All Rights Reserved.</div>',
-                unsafe_allow_html=True)
     st.write("Capabilities: ")
     st.write("1. Default gpt-4o-mini chatbot to answer questions (has memory of previous questions)")
     st.write("2. Has tools to perform web search, Wikipedia lookup, stock data retrieval, text analysis, and word cloud generation.")
@@ -170,6 +161,14 @@ def agent_main():
             st.session_state.memory.clear()
         st.session_state.input_text_box = ""
         st.rerun()
+
+    # Render chat messages below header and input
+    if st.session_state.chat_history:
+        for i, message in enumerate(st.session_state.chat_history):
+            if i % 2 == 0:
+                st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+            else:
+                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
 
 
 if __name__ == '__main__':
