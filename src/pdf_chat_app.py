@@ -521,6 +521,14 @@ def pdf_main():
     if 'question_input' not in st.session_state:
         st.session_state.question_input = ""
 
+    # --- Move chat rendering to the top, before input box and controls ---
+    if st.session_state.chat_history:
+        for i, message in enumerate(st.session_state.chat_history):
+            if i % 2 == 0:
+                st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+            else:
+                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+
     # Create a form for the question input to handle Enter key
     with st.form(key='question_form', clear_on_submit=True):
         question = st.text_input(
@@ -553,13 +561,8 @@ def pdf_main():
         st.session_state.question_input = ""
         st.rerun()
 
-    # Show chat with latest at the bottom
-    if st.session_state.chat_history:
-        for i, message in enumerate(st.session_state.chat_history):
-            if i % 2 == 0:
-                st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-            else:
-                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+    # Remove the duplicate chat rendering at the bottom
+    # ...existing code...
 
 if __name__ == "__main__":
     pdf_main()
